@@ -59,13 +59,20 @@ def info(
         "no_warnings": True,
         "skip_download": True,
         "noplaylist": True,
+    ydl_opts = {
+        "quiet": True,
+        "no_warnings": True,
+        "skip_download": True,
+        "noplaylist": True,
         "format": "bestvideo*+bestaudio/best",
+        # Bypass "Sign in to confirm you're not a bot" on datacenter IPs
+        # by using player clients that don't require web cookies.
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["tv", "ios", "web_safari", "mweb"],
+            }
+        },
     }
-
-    try:
-        with YoutubeDL(ydl_opts) as ydl:
-            data = ydl.extract_info(url, download=False)
-    except Exception as e:
         raise HTTPException(status_code=502, detail=f"Extractor error: {str(e)[:200]}")
 
     formats = data.get("formats") or []
