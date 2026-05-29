@@ -2,156 +2,130 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Layout } from "@/components/Layout";
 import { Downloader } from "@/components/Downloader";
 import { AdSlot } from "@/components/AdSlot";
-import { ArticleCard, SectionHeader, type Article } from "@/components/ArticleCard";
+import { CheckCircle2, Smartphone, Zap, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GrabTube Daily — YouTube Downloads, Guides & Tools" },
-      { name: "description", content: "Your daily portal for free YouTube downloaders, MP4 & MP3 converters, 4K/Shorts tools, and how-to guides. Free, fast, no signup." },
-      { property: "og:title", content: "GrabTube Daily — YouTube Downloads & Guides" },
-      { property: "og:description", content: "Free YouTube downloader portal with daily tutorials and tools." },
+      { title: "GrabTube — Free YouTube Video Downloader (MP4, MP3, 4K)" },
+      { name: "description", content: "Free YouTube downloader. Convert and save videos to MP4, MP3, 4K, or Shorts in seconds. No signup, no limits, works on any device." },
+      { property: "og:title", content: "GrabTube — Free YouTube Downloader" },
+      { property: "og:description", content: "Free YouTube to MP4 & MP3 downloader." },
     ],
   }),
   component: Home,
 });
 
-const PIC = (id: number, w = 800, h = 500) => `https://picsum.photos/seed/grabtube-${id}/${w}/${h}`;
-
-const LEAD: Article = {
-  category: "Editor's Pick",
-  title: "How to download YouTube videos in 4K without losing a single pixel of quality",
-  excerpt: "From bitrate basics to codec choices, here's the complete 2026 guide to grabbing Ultra HD YouTube videos the right way — on any device, completely free.",
-  image: PIC(1, 1200, 720),
-  href: "/4k-downloader",
-  meta: "12 min read · Updated today",
-};
-
-const TOP_STORIES: Article[] = [
-  { category: "Tutorial", title: "YouTube to MP3 at 320kbps: the audiophile setup that costs nothing", image: PIC(2), href: "/youtube-to-mp3", meta: "8 min read" },
-  { category: "Guide", title: "Shorts without watermark: 3 methods that actually work in 2026", image: PIC(3), href: "/youtube-shorts-downloader", meta: "5 min read" },
-  { category: "Tools", title: "MP4 vs WEBM vs M4A — which format should you pick?", image: PIC(4), href: "/youtube-to-mp4", meta: "4 min read" },
-  { category: "How-To", title: "Save entire YouTube playlists in one click (legally)", image: PIC(5), href: "/", meta: "6 min read" },
+const FAQS = [
+  { q: "1. Where are downloads saved?", a: "Files are saved to your browser's default download folder — on desktop, that's usually the Downloads folder; on mobile, it goes to Files (iOS) or your gallery (Android)." },
+  { q: "2. How do I download YouTube videos in MP3?", a: "Paste the YouTube link, select MP3 from the format options, then click Download. The audio file is ready in seconds." },
+  { q: "3. How long does it take to download a video?", a: "Most videos convert in a few seconds. Long videos or 4K files can take up to a minute depending on length and your connection." },
+  { q: "4. Is it safe to download YouTube videos with GrabTube?", a: "Yes. GrabTube doesn't require signup, doesn't store your downloads, and runs entirely over HTTPS. Always respect copyright when downloading." },
 ];
 
-const TRENDING: Article[] = [
-  { category: "Trending", title: "Why your YouTube downloads look blurry — and the 2-minute fix", image: PIC(10, 200, 200), href: "/", meta: "Trending #1" },
-  { category: "Trending", title: "The fastest way to convert long videos to MP3 on iPhone", image: PIC(11, 200, 200), href: "/", meta: "Trending #2" },
-  { category: "Trending", title: "Downloading copyrighted music: what you can (and can't) do", image: PIC(12, 200, 200), href: "/", meta: "Trending #3" },
-  { category: "Trending", title: "Best free desktop tools when the browser isn't enough", image: PIC(13, 200, 200), href: "/", meta: "Trending #4" },
-  { category: "Trending", title: "YouTube live streams: capture and save while broadcasting", image: PIC(14, 200, 200), href: "/", meta: "Trending #5" },
+const FEATURES = [
+  { icon: Zap, t: "Fast conversion", d: "Most videos process in seconds, not minutes." },
+  { icon: ShieldCheck, t: "Safe & private", d: "No accounts, no tracking, no stored files." },
+  { icon: Smartphone, t: "Any device", d: "Works on phone, tablet, laptop, or desktop." },
+  { icon: CheckCircle2, t: "Multiple formats", d: "MP4, MP3, 4K, Shorts — pick what fits you." },
 ];
-
-const GUIDES: Article[] = Array.from({ length: 6 }).map((_, i) => ({
-  category: ["Tutorial", "Guide", "Tips", "How-To"][i % 4],
-  title: [
-    "Convert YouTube to MP4 on Android without ads",
-    "Batch download channels with these 4 free tools",
-    "The cleanest way to rip audio from podcasts",
-    "Embedding YouTube videos offline in Keynote",
-    "Backing up your favorite music videos — a checklist",
-    "Why bitrate matters more than file size",
-  ][i],
-  image: PIC(20 + i),
-  href: "/",
-  meta: `${3 + i} min read`,
-}));
 
 function Home() {
   return (
     <Layout>
-      {/* Leaderboard ad below masthead — prime AdSense placement */}
-      <div className="container mx-auto px-4 pt-4">
-        <AdSlot slot="1111111111" label="Sponsored" minHeight={90} />
+      {/* Hero */}
+      <section className="container mx-auto px-4 pt-16 pb-12 text-center">
+        <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight">YouTube Video Downloader</h1>
+        <p className="mt-3 text-muted-foreground">Free. No signup. Download now.</p>
+        <div className="mt-8">
+          <Downloader />
+        </div>
+      </section>
+
+      {/* Top leaderboard ad */}
+      <div className="container mx-auto px-4">
+        <AdSlot slot="1111111111" minHeight={120} />
       </div>
 
-      <div className="container mx-auto px-4 py-6 grid gap-8 lg:grid-cols-[1fr_320px]">
-        {/* MAIN COLUMN */}
-        <div className="min-w-0">
-          {/* Hero: lead story + top stories grid */}
-          <section className="grid gap-6 md:grid-cols-[2fr_1fr] mb-8 pb-8 border-b border-border">
-            <ArticleCard a={LEAD} size="lg" />
-            <div className="divide-y divide-border">
-              {TOP_STORIES.slice(0, 4).map((a, i) => (
-                <ArticleCard key={i} a={a} size="row" />
-              ))}
-            </div>
-          </section>
+      {/* Disclaimer banner */}
+      <div className="container mx-auto px-4 mt-2">
+        <div className="max-w-5xl mx-auto bg-primary-soft text-primary border border-primary/20 rounded-md px-4 py-3 text-sm">
+          – GrabTube is a free, web-based YouTube downloader and is not affiliated with any software or paid products.
+        </div>
+      </div>
 
-          {/* In-article ad */}
-          <AdSlot slot="2222222222" minHeight={250} />
-
-          {/* Guides grid */}
-          <section className="mb-10">
-            <SectionHeader title="Latest Guides" kicker="Updated daily" />
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {GUIDES.map((a, i) => (
-                <ArticleCard key={i} a={a} size="md" />
-              ))}
-            </div>
-          </section>
-
-          {/* Mid-content ad */}
-          <AdSlot slot="3333333333" minHeight={250} />
-
-          {/* Editor picks / features */}
-          <section className="mb-10">
-            <SectionHeader title="Most Popular Tools" />
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
-              {TOP_STORIES.map((a, i) => (
-                <ArticleCard key={i} a={a} size="sm" />
-              ))}
-            </div>
-          </section>
-
-          {/* FAQ-style block as content for AdSense */}
-          <section className="bg-secondary p-6">
-            <SectionHeader title="Quick Answers" />
-            <div className="grid gap-4 sm:grid-cols-2 text-sm">
-              {[
-                ["Is GrabTube free?", "Yes — every tool on the site is free with no signup or daily limits."],
-                ["Which formats are supported?", "MP4 (144p–8K), MP3 up to 320kbps, WEBM, M4A, plus Shorts."],
-                ["Do I need to install anything?", "No. Everything runs in your browser on any device."],
-                ["Is it safe and legal?", "We don't track or store videos. Always respect copyright and YouTube's ToS."],
-              ].map(([q, a]) => (
-                <div key={q}>
-                  <h4 className="font-serif font-bold text-base text-ink mb-1">{q}</h4>
-                  <p className="text-muted-foreground">{a}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+      {/* Two-column content */}
+      <section className="container mx-auto px-4 mt-10 grid gap-6 lg:grid-cols-2 max-w-5xl">
+        <div className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-primary" /> Best YouTube Downloader
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            GrabTube is one of the best YouTube video downloaders for MP3 and MP4 formats. It offers a free, easy-to-use tool that lets you save videos (up to 8K), Shorts, and audio from YouTube with just one click. Whether you want a high-resolution video, a quick Shorts clip, or just the audio track from a music video, GrabTube makes the process fast and simple. Paste the YouTube link, pick the quality, and download it directly to your device.
+          </p>
         </div>
 
-        {/* SIDEBAR */}
-        <aside className="space-y-6 lg:sticky lg:top-4 lg:self-start">
-          <Downloader compact />
-
-          <AdSlot slot="4444444444" label="Sponsored" minHeight={250} />
-
-          <div>
-            <SectionHeader title="Trending Now" />
-            <div className="divide-y divide-border">
-              {TRENDING.map((a, i) => (
-                <ArticleCard key={i} a={a} size="row" />
-              ))}
-            </div>
+        <div className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-primary" /> Frequently Asked Questions
+          </h2>
+          <div className="divide-y divide-border">
+            {FAQS.map((f, i) => (
+              <details key={i} className="py-3 group">
+                <summary className="text-sm font-medium cursor-pointer list-none flex justify-between items-center">
+                  {f.q}
+                  <span className="text-muted-foreground group-open:rotate-180 transition text-xs">▾</span>
+                </summary>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+              </details>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <AdSlot slot="5555555555" label="Advertisement" minHeight={600} />
-
-          <div className="bg-ink text-white p-5">
-            <h4 className="font-serif font-bold text-lg mb-2">Daily newsletter</h4>
-            <p className="text-xs text-white/70 mb-3">The week's best YouTube tools and tricks, in your inbox every Friday.</p>
-            <input className="w-full h-10 px-3 text-sm text-ink bg-white outline-none mb-2" placeholder="you@email.com" />
-            <button className="w-full h-10 bg-primary font-bold text-sm uppercase">Subscribe</button>
-          </div>
-        </aside>
+      {/* Mid ad */}
+      <div className="container mx-auto px-4 mt-8">
+        <AdSlot slot="2222222222" minHeight={250} />
       </div>
 
-      {/* Footer leaderboard */}
-      <div className="container mx-auto px-4 pb-6">
-        <AdSlot slot="6666666666" label="Sponsored" minHeight={90} />
+      {/* Features */}
+      <section className="container mx-auto px-4 mt-10 max-w-5xl">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span className="size-1.5 rounded-full bg-primary" /> GrabTube Features
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {FEATURES.map((f, i) => (
+            <div key={i} className="bg-card border border-border rounded-lg p-4">
+              <f.icon className="size-5 text-primary mb-2" />
+              <h3 className="text-sm font-semibold">{f.t}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{f.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How to use */}
+      <section className="container mx-auto px-4 mt-10 max-w-5xl">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span className="size-1.5 rounded-full bg-primary" /> How to use
+        </h2>
+        <ol className="grid gap-3 sm:grid-cols-3">
+          {[
+            "Copy the YouTube video URL from your browser or the YouTube app.",
+            "Paste the link into the input field above and pick your format.",
+            "Click Download — your file will be saved to your device.",
+          ].map((step, i) => (
+            <li key={i} className="bg-card border border-border rounded-lg p-4 text-sm">
+              <span className="inline-flex size-6 rounded-full bg-primary text-primary-foreground items-center justify-center text-xs font-semibold mr-2">{i + 1}</span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Footer ad */}
+      <div className="container mx-auto px-4 mt-10">
+        <AdSlot slot="3333333333" minHeight={120} />
       </div>
     </Layout>
   );
