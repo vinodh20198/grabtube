@@ -1,78 +1,133 @@
 import { Link } from "@tanstack/react-router";
-import { Youtube, Github } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 
-const NAV = [
+const TOP_NAV = [
   { to: "/", label: "Home" },
-  { to: "/youtube-to-mp4", label: "MP4" },
-  { to: "/youtube-to-mp3", label: "MP3" },
+  { to: "/youtube-to-mp4", label: "MP4 Download" },
+  { to: "/youtube-to-mp3", label: "MP3 Convert" },
   { to: "/youtube-shorts-downloader", label: "Shorts" },
-  { to: "/4k-downloader", label: "4K" },
+  { to: "/4k-downloader", label: "4K / 8K" },
+];
+
+const SECTIONS = ["News", "Tutorials", "Tools", "Music", "Movies", "Tech", "How-To", "Reviews", "Trending"];
+
+const TICKER = [
+  "How to download YouTube 4K videos without losing quality",
+  "Top 10 free YouTube to MP3 converters in 2026",
+  "YouTube Shorts: download tricks every creator should know",
+  "Is downloading YouTube videos legal? A simple guide",
+  "Best bitrate settings when converting YouTube to MP3",
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 glass border-b border-border/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <span className="size-9 rounded-xl bg-gradient-primary grid place-items-center shadow-glow group-hover:scale-105 transition">
-              <Youtube className="size-5 text-primary-foreground" />
-            </span>
-            <span className="font-display font-bold text-lg tracking-tight">
-              Grab<span className="text-gradient-primary">Tube</span>
-            </span>
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Top utility bar */}
+      <div className="bg-ink text-white text-xs">
+        <div className="container mx-auto px-4 h-8 flex items-center justify-between">
+          <span className="opacity-80">{new Date().toUTCString().slice(0, 16)} · Free YouTube Downloader Portal</span>
+          <span className="hidden sm:inline opacity-60">EN</span>
+        </div>
+      </div>
+
+      {/* Masthead */}
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
+          <Link to="/" className="flex items-baseline gap-1">
+            <span className="font-serif text-3xl sm:text-4xl font-bold text-primary tracking-tight">GrabTube</span>
+            <span className="font-serif text-xs text-muted-foreground hidden sm:inline">Daily</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV.map((n) => (
+          <div className="hidden md:flex flex-1 max-w-md relative">
+            <input
+              placeholder="Search downloads, guides, tools…"
+              className="w-full h-10 rounded-sm border border-border bg-input px-3 pr-10 text-sm outline-none focus:border-primary"
+            />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          </div>
+          <button className="md:hidden p-2 border border-border rounded-sm" aria-label="Menu">
+            <Menu className="size-5" />
+          </button>
+        </div>
+
+        {/* Primary nav */}
+        <nav className="border-t border-border bg-primary text-primary-foreground">
+          <div className="container mx-auto px-4 flex items-center gap-1 overflow-x-auto">
+            {TOP_NAV.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
-                className="px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition"
-                activeProps={{ className: "text-foreground bg-secondary" }}
+                className="px-3 py-2.5 text-sm font-medium whitespace-nowrap hover:bg-white/10"
+                activeProps={{ className: "bg-white/15" }}
               >
                 {n.label}
               </Link>
             ))}
-          </nav>
+          </div>
+        </nav>
+
+        {/* Section bar */}
+        <div className="border-b border-border bg-secondary">
+          <div className="container mx-auto px-4 flex items-center gap-4 overflow-x-auto text-xs uppercase tracking-wide text-muted-foreground py-2">
+            {SECTIONS.map((s) => (
+              <span key={s} className="whitespace-nowrap hover:text-primary cursor-pointer">{s}</span>
+            ))}
+          </div>
         </div>
       </header>
 
+      {/* Breaking ticker */}
+      <div className="bg-card border-b border-border overflow-hidden">
+        <div className="container mx-auto px-4 flex items-center gap-3">
+          <span className="bg-primary text-primary-foreground text-xs font-bold uppercase px-2 py-1 my-2 shrink-0">
+            Trending
+          </span>
+          <div className="relative overflow-hidden flex-1 py-2">
+            <div className="ticker-track flex gap-10 whitespace-nowrap text-sm">
+              {[...TICKER, ...TICKER].map((t, i) => (
+                <span key={i} className="text-foreground">› {t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-border/60 mt-20 py-10">
-        <div className="container mx-auto px-4 grid gap-8 md:grid-cols-3 text-sm">
+      <footer className="border-t border-border bg-secondary mt-12">
+        <div className="container mx-auto px-4 py-8 grid gap-8 md:grid-cols-4 text-sm">
           <div>
-            <div className="font-display font-bold text-lg mb-2">
-              Grab<span className="text-gradient-primary">Tube</span>
-            </div>
-            <p className="text-muted-foreground">
-              The fastest free YouTube downloader. MP4, MP3, 4K, Shorts — no signup, no limits.
+            <div className="font-serif text-2xl font-bold text-primary mb-2">GrabTube</div>
+            <p className="text-muted-foreground text-xs leading-relaxed">
+              Your daily portal for free YouTube downloads, guides, and tools. Free forever, no signup required.
             </p>
           </div>
+          {[
+            { h: "Downloaders", l: TOP_NAV.slice(1) },
+            { h: "Sections", l: SECTIONS.slice(0, 5).map((s) => ({ to: "/", label: s })) },
+          ].map((col) => (
+            <div key={col.h}>
+              <h4 className="font-bold uppercase text-xs tracking-wider mb-3 text-ink">{col.h}</h4>
+              <ul className="space-y-1.5 text-muted-foreground">
+                {col.l.map((it) => (
+                  <li key={it.label}>
+                    <Link to={it.to} className="hover:text-primary">{it.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
           <div>
-            <h4 className="font-semibold mb-3">Tools</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              {NAV.slice(1).map((n) => (
-                <li key={n.to}>
-                  <Link to={n.to} className="hover:text-foreground">{n.label} Downloader</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-3">Legal</h4>
-            <ul className="space-y-2 text-muted-foreground">
-              <li>Only download videos you own or have rights to.</li>
+            <h4 className="font-bold uppercase text-xs tracking-wider mb-3 text-ink">Legal</h4>
+            <ul className="space-y-1.5 text-muted-foreground text-xs">
+              <li>Only download content you own or have rights to.</li>
               <li>Respect YouTube's Terms of Service.</li>
-              <li className="flex items-center gap-2 pt-2">
-                <Github className="size-4" /> Made with ♥
-              </li>
+              <li>Not affiliated with YouTube or Google.</li>
             </ul>
           </div>
         </div>
-        <p className="text-center text-xs text-muted-foreground mt-8">
-          © {new Date().getFullYear()} GrabTube. Not affiliated with YouTube or Google.
-        </p>
+        <div className="border-t border-border py-4 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} GrabTube. All rights reserved.
+        </div>
       </footer>
     </div>
   );
