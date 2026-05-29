@@ -1,13 +1,29 @@
 import { useState } from "react";
-import { Clipboard, Download, Loader2, Info } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Clipboard, Download, Loader2, Info, Music, Video, X } from "lucide-react";
+import { fetchDownloadOptions, type DownloadResult } from "@/lib/download.functions";
 
 type Format = "mp4" | "mp3" | "4k" | "shorts";
+
+function formatBytes(bytes?: string) {
+  if (!bytes) return "";
+  const n = Number(bytes);
+  if (!Number.isFinite(n) || n <= 0) return "";
+  const units = ["B", "KB", "MB", "GB"];
+  let i = 0;
+  let v = n;
+  while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+  return `${v.toFixed(v >= 10 ? 0 : 1)} ${units[i]}`;
+}
 
 export function Downloader({ defaultFormat = "mp4" as Format }) {
   const [url, setUrl] = useState("");
   const [format, setFormat] = useState<Format>(defaultFormat);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<DownloadResult | null>(null);
+
+  const fetchFn = useServerFn(fetchDownloadOptions);
 
   async function paste() {
     try {
@@ -16,15 +32,26 @@ export function Downloader({ defaultFormat = "mp4" as Format }) {
     } catch { /* permissions */ }
   }
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!url.trim()) return;
+    const trimmed = url.trim();
+    if (!trimmed) return;
     setLoading(true);
-    setMessage(null);
-    setTimeout(() => {
+    setError(null);
+    setResult(null);
+    try {
+      const res = await fetchFn({ data: { url: trimmed } });
+      if (!res.ok) {
+        setError(res.error || "Could not fetch video.");
+      } else {
+        setResult(res);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Try again.");
+    } finally {
       setLoading(false);
-      setMessage("Demo mode — connect a download API (e.g. RapidAPI 'yt-api') to enable real downloads.");
-    }, 700);
+    }
   }
 
   const formats: { id: Format; label: string }[] = [
@@ -33,6 +60,10 @@ export function Downloader({ defaultFormat = "mp4" as Format }) {
     { id: "4k", label: "4K" },
     { id: "shorts", label: "Shorts" },
   ];
+
+  const showAudioFirst = format === "mp3";
+  const videoList = result?.videoFormats ?? [];
+  const audioList = result?.audioFormats ?? [];
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -43,6 +74,7 @@ export function Downloader({ defaultFormat = "mp4" as Format }) {
           placeholder="Paste your YouTube video link"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          maxLength={500}
           className="flex-1 h-11 px-3 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           aria-label="YouTube URL"
         />
@@ -83,7 +115,97 @@ export function Downloader({ defaultFormat = "mp4" as Format }) {
       <p className="mt-4 text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
         <Info className="size-3.5" /> Copyrighted content is not available for download with this tool.
       </p>
-      {message && <p className="mt-2 text-xs text-primary text-center">{message}</p>}
+
+      {error && (
+        <div className="mt-4 rounded-md border border-destructive/30 bg-destructive/5 text-destructive text-sm px-3 py-2 flex items-start gap-2">
+          <X className="size-4 mt-0.5 shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {result?.ok && (
+        <div className="mt-6 bg-card border border-border rounded-lg overflow-hidden">
+          <div className="p-4 flex gap-4 items-start border-b border-border">
+            {result.thumbnail && (
+              <img
+                src={result.thumbnail}
+                alt={result.title}
+                className="w-32 h-20 object-cover rounded-md bg-muted shrink-0"
+                loading="lazy"
+              />
+            )}
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold text-foreground line-clamp-2">{result.title}</h3>
+              {result.lengthSeconds ? (
+                <p className="text-xs text-muted-foreground mt-1">
+                  {Math.floor(result.lengthSeconds / 60)}:{String(result.lengthSeconds % 60).padStart(2, "0")} min
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className={`grid ${showAudioFirst ? "" : ""} sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border`}>
+            <FormatList
+              icon={<Video className="size-4" />}
+              title="Video"
+              items={videoList}
+              empty="No video formats available."
+              filename={result.title || "video"}
+            />
+            <FormatList
+              icon={<Music className="size-4" />}
+              title="Audio"
+              items={audioList}
+              empty="No audio formats available."
+              filename={result.title || "audio"}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FormatList({
+  icon, title, items, empty, filename,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  items: { itag: string | number; quality: string; qualityLabel?: string; extension: string; url: string; contentLength?: string }[];
+  empty: string;
+  filename: string;
+}) {
+  return (
+    <div className="p-4">
+      <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5 mb-3">
+        {icon} {title}
+      </h4>
+      {items.length === 0 ? (
+        <p className="text-xs text-muted-foreground">{empty}</p>
+      ) : (
+        <ul className="space-y-2">
+          {items.slice(0, 8).map((f) => (
+            <li key={`${f.itag}-${f.quality}`} className="flex items-center justify-between gap-2">
+              <div className="text-sm text-foreground">
+                <span className="font-medium">{f.qualityLabel || f.quality}</span>
+                <span className="text-xs text-muted-foreground ml-2 uppercase">{f.extension}</span>
+                {f.contentLength && (
+                  <span className="text-xs text-muted-foreground ml-2">{formatBytes(f.contentLength)}</span>
+                )}
+              </div>
+              <a
+                href={f.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                download={`${filename}.${f.extension}`}
+                className="text-xs font-semibold px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-95 inline-flex items-center gap-1"
+              >
+                <Download className="size-3.5" /> Download
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
