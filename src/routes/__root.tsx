@@ -72,26 +72,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "GrabTube — Free YouTube Video Downloader (MP4, MP3, 4K)" },
-      { name: "description", content: "Download YouTube videos free in MP4, MP3, 4K, and Shorts. Fast, unlimited, no signup. Works on any device." },
+      { title: "GrabTube — Free YouTube Video Downloader" },
+      { name: "description", content: "Download YouTube videos free in MP4, MP3, 4K, and Shorts. Fast, unlimited, no signup." },
       { name: "author", content: "GrabTube" },
-      { name: "theme-color", content: "#1a1024" },
-      { property: "og:title", content: "GrabTube — Free YouTube Video Downloader" },
-      { property: "og:description", content: "Download YouTube videos free in MP4, MP3, 4K, and Shorts. Fast, unlimited, no signup." },
+      { property: "og:title", content: "GrabTube — Free YouTube Downloader" },
+      { property: "og:description", content: "Free YouTube to MP4 & MP3 downloader. No signup." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { rel: "canonical", href: "/" } as never,
+      { name: "twitter:card", content: "summary" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" } as never,
-    ],
-    scripts: [
-      {
-        async: true,
-        src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX",
-        crossOrigin: "anonymous",
-      } as never,
     ],
   }),
 

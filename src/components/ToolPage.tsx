@@ -1,20 +1,17 @@
 import { Layout } from "@/components/Layout";
 import { Downloader } from "@/components/Downloader";
 import { AdSlot } from "@/components/AdSlot";
-import { ArticleCard, SectionHeader, type Article } from "@/components/ArticleCard";
 
 interface Props {
-  category: string;
   title: string;
+  subtitle: string;
   intro: string;
   body: { h: string; p: string }[];
   faqs: { q: string; a: string }[];
   format: "mp4" | "mp3" | "4k" | "shorts";
-  hero: string;
-  related: Article[];
 }
 
-export function ToolPage({ category, title, intro, body, faqs, format, hero, related }: Props) {
+export function ToolPage({ title, subtitle, intro, body, faqs, format }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -27,76 +24,54 @@ export function ToolPage({ category, title, intro, body, faqs, format, hero, rel
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 pt-4">
-        <AdSlot slot="7777777777" label="Sponsored" minHeight={90} />
+      <section className="container mx-auto px-4 pt-16 pb-12 text-center">
+        <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight">{title}</h1>
+        <p className="mt-3 text-muted-foreground">{subtitle}</p>
+        <div className="mt-8">
+          <Downloader defaultFormat={format} />
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4">
+        <AdSlot slot="4444444444" minHeight={120} />
       </div>
 
-      <div className="container mx-auto px-4 py-6 grid gap-8 lg:grid-cols-[1fr_320px]">
-        <article className="min-w-0">
-          <span className="text-xs uppercase tracking-wider text-primary font-bold">{category}</span>
-          <h1 className="font-serif font-bold text-3xl sm:text-5xl text-ink mt-2 leading-tight">{title}</h1>
-          <p className="text-lg text-muted-foreground mt-3 leading-relaxed">{intro}</p>
-          <p className="text-xs text-muted-foreground mt-3 pb-4 border-b border-border">
-            By GrabTube Editorial · Updated {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} · 6 min read
-          </p>
+      <article className="container mx-auto px-4 mt-8 max-w-3xl">
+        <div className="bg-card border border-border rounded-lg p-6 sm:p-8">
+          <p className="text-base leading-relaxed text-muted-foreground">{intro}</p>
+        </div>
 
-          <div className="my-6">
-            <img src={hero} alt="" className="w-full aspect-[16/9] object-cover" />
-          </div>
+        <div className="mt-6 space-y-6">
+          {body.map((b, i) => (
+            <section key={i} className="bg-card border border-border rounded-lg p-6">
+              <h2 className="text-lg font-semibold mb-2">{b.h}</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">{b.p}</p>
+              {i === 1 && <div className="mt-6"><AdSlot slot="5555555555" minHeight={250} /></div>}
+            </section>
+          ))}
+        </div>
 
-          <div className="my-6">
-            <Downloader defaultFormat={format} />
-          </div>
-
-          <AdSlot slot="8888888888" minHeight={250} />
-
-          <div className="prose-content space-y-6 mt-6">
-            {body.map((b, i) => (
-              <section key={i}>
-                <h2 className="font-serif font-bold text-2xl text-ink mb-2">{b.h}</h2>
-                <p className="text-[15px] leading-[1.75] text-foreground">{b.p}</p>
-                {i === 1 && <div className="my-6"><AdSlot slot="9999999999" minHeight={250} /></div>}
-              </section>
+        <section className="mt-6 bg-card border border-border rounded-lg p-6">
+          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-primary" /> Frequently Asked Questions
+          </h2>
+          <div className="divide-y divide-border">
+            {faqs.map((f, i) => (
+              <details key={i} className="py-3 group">
+                <summary className="text-sm font-medium cursor-pointer list-none flex justify-between items-center">
+                  {f.q}
+                  <span className="text-muted-foreground group-open:rotate-180 transition text-xs">▾</span>
+                </summary>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+              </details>
             ))}
           </div>
+        </section>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      </article>
 
-          <section className="mt-10">
-            <SectionHeader title="Frequently Asked" />
-            <div className="space-y-3">
-              {faqs.map((f, i) => (
-                <details key={i} className="border border-border p-4 group">
-                  <summary className="font-serif font-bold text-base cursor-pointer list-none flex justify-between">
-                    {f.q}<span className="text-primary group-open:rotate-45 transition">+</span>
-                  </summary>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.a}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-
-          <section className="mt-10">
-            <SectionHeader title="Related Guides" />
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {related.map((a, i) => <ArticleCard key={i} a={a} size="md" />)}
-            </div>
-          </section>
-        </article>
-
-        <aside className="space-y-6 lg:sticky lg:top-4 lg:self-start">
-          <AdSlot slot="1010101010" label="Sponsored" minHeight={250} />
-          <div>
-            <SectionHeader title="Trending Now" />
-            <div className="divide-y divide-border">
-              {related.slice(0, 5).map((a, i) => <ArticleCard key={i} a={a} size="row" />)}
-            </div>
-          </div>
-          <AdSlot slot="1212121212" label="Advertisement" minHeight={600} />
-        </aside>
-      </div>
-
-      <div className="container mx-auto px-4 pb-6">
-        <AdSlot slot="1313131313" label="Sponsored" minHeight={90} />
+      <div className="container mx-auto px-4 mt-10">
+        <AdSlot slot="6666666666" minHeight={120} />
       </div>
     </Layout>
   );
