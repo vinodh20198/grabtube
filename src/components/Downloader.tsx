@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Download, Loader2 } from "lucide-react";
+import { Clipboard, Download, Loader2, Info } from "lucide-react";
 
 type Format = "mp4" | "mp3" | "4k" | "shorts";
 
-const FORMATS: { id: Format; label: string }[] = [
-  { id: "mp4", label: "MP4 1080p" },
-  { id: "mp3", label: "MP3 320kbps" },
-  { id: "4k", label: "4K / 8K" },
-  { id: "shorts", label: "Shorts" },
-];
-
-export function Downloader({ defaultFormat = "mp4" as Format, compact = false }) {
+export function Downloader({ defaultFormat = "mp4" as Format }) {
   const [url, setUrl] = useState("");
   const [format, setFormat] = useState<Format>(defaultFormat);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
+  async function paste() {
+    try {
+      const txt = await navigator.clipboard.readText();
+      if (txt) setUrl(txt);
+    } catch { /* permissions */ }
+  }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,51 +24,66 @@ export function Downloader({ defaultFormat = "mp4" as Format, compact = false })
     setTimeout(() => {
       setLoading(false);
       setMessage("Demo mode — connect a download API (e.g. RapidAPI 'yt-api') to enable real downloads.");
-    }, 800);
+    }, 700);
   }
 
+  const formats: { id: Format; label: string }[] = [
+    { id: "mp4", label: "MP4" },
+    { id: "mp3", label: "MP3" },
+    { id: "4k", label: "4K" },
+    { id: "shorts", label: "Shorts" },
+  ];
+
   return (
-    <div className={`bg-card border-2 border-primary ${compact ? "p-4" : "p-5 sm:p-6"}`}>
-      <div className="flex items-center gap-2 mb-3">
-        <span className="bg-primary text-primary-foreground text-[10px] font-bold uppercase px-2 py-0.5">Tool</span>
-        <h3 className="font-serif font-bold text-lg">YouTube Downloader</h3>
-      </div>
-      <form onSubmit={onSubmit} className="space-y-3">
+    <div className="w-full max-w-3xl mx-auto">
+      <form onSubmit={onSubmit} className="bg-card border border-border rounded-lg p-2 flex flex-col sm:flex-row items-stretch gap-2 shadow-sm">
         <input
           type="url"
           inputMode="url"
-          placeholder="Paste YouTube link here…"
+          placeholder="Paste your YouTube video link"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className="w-full h-11 border border-border bg-input px-3 text-sm outline-none focus:border-primary"
+          className="flex-1 h-11 px-3 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           aria-label="YouTube URL"
         />
-        <div className="flex flex-wrap gap-1.5">
-          {FORMATS.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              onClick={() => setFormat(f.id)}
-              className={`px-3 py-1.5 text-xs font-medium border transition ${
-                format === f.id
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-foreground border-border hover:border-primary"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+        <button
+          type="button"
+          onClick={paste}
+          className="h-11 px-4 rounded-md bg-primary-soft text-primary text-sm font-medium flex items-center justify-center gap-1.5 hover:opacity-90"
+        >
+          <Clipboard className="size-4" /> Paste
+        </button>
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-11 bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-60"
+          className="h-11 px-5 rounded-md bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-1.5 hover:opacity-95 disabled:opacity-60"
         >
-          {loading ? <><Loader2 className="size-4 animate-spin" /> Fetching…</> : <><Download className="size-4" /> Download {format.toUpperCase()}</>}
+          {loading ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+          {loading ? "Fetching" : "Download"}
         </button>
-        {message && <p className="text-xs text-primary">{message}</p>}
-        <p className="text-[11px] text-muted-foreground text-center">Free · No registration · Unlimited</p>
       </form>
+
+      <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
+        {formats.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            onClick={() => setFormat(f.id)}
+            className={`px-3 py-1 text-xs rounded-full border transition ${
+              format === f.id
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-card border-border text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      <p className="mt-4 text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
+        <Info className="size-3.5" /> Copyrighted content is not available for download with this tool.
+      </p>
+      {message && <p className="mt-2 text-xs text-primary text-center">{message}</p>}
     </div>
   );
 }

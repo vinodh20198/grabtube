@@ -10,8 +10,7 @@ interface Props {
 
 export const ADSENSE_CLIENT = "ca-pub-XXXXXXXXXXXXXXXX";
 
-export function AdSlot({ slot, format = "auto", className, label = "Advertisement", minHeight = 90 }: Props) {
-  // Render only after mount — AdSense mutates the <ins> immediately, causing SSR hydration mismatch otherwise.
+export function AdSlot({ slot, format = "auto", className, label = "Advertisement", minHeight = 100 }: Props) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -22,7 +21,7 @@ export function AdSlot({ slot, format = "auto", className, label = "Advertisemen
   }, []);
 
   return (
-    <div className={`ad-frame my-4 mx-auto w-full text-center p-2 ${className ?? ""}`}>
+    <div className={`ad-frame my-6 mx-auto w-full max-w-3xl text-center p-2 ${className ?? ""}`}>
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
       {mounted ? (
         <ins
@@ -35,7 +34,7 @@ export function AdSlot({ slot, format = "auto", className, label = "Advertisemen
         />
       ) : (
         <div style={{ minHeight }} className="grid place-items-center text-xs text-muted-foreground">
-          Ad space ({minHeight}px)
+          Ad space
         </div>
       )}
     </div>
