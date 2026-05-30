@@ -8,7 +8,7 @@ interface Props {
   minHeight?: number;
 }
 
-export const ADSENSE_CLIENT = "ca-pub-XXXXXXXXXXXXXXXX";
+export const ADSENSE_CLIENT = "ca-pub-8950040060205447";
 
 export function AdSlot({ slot, format = "auto", className, label = "Advertisement", minHeight = 100 }: Props) {
   const [mounted, setMounted] = useState(false);
