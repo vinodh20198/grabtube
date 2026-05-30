@@ -9,6 +9,11 @@ const ROUTES = [
   { path: "/youtube-to-mp3", priority: "0.9", changefreq: "weekly" as const },
   { path: "/youtube-shorts-downloader", priority: "0.8", changefreq: "weekly" as const },
   { path: "/4k-downloader", priority: "0.8", changefreq: "weekly" as const },
+  { path: "/blog", priority: "0.7", changefreq: "weekly" as const },
+  { path: "/blog/youtube-to-mp4", priority: "0.6", changefreq: "monthly" as const },
+  { path: "/blog/youtube-to-mp3", priority: "0.6", changefreq: "monthly" as const },
+  { path: "/blog/where-do-youtube-downloads-go", priority: "0.6", changefreq: "monthly" as const },
+  { path: "/blog/is-downloading-youtube-videos-illegal", priority: "0.6", changefreq: "monthly" as const },
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({

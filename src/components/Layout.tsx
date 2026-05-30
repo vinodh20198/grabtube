@@ -3,11 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { Download, Sun } from "lucide-react";
 
 const NAV = [
-  { to: "/", label: "How to use" },
   { to: "/youtube-to-mp4", label: "YouTube to MP4" },
   { to: "/youtube-to-mp3", label: "YouTube to MP3" },
   { to: "/youtube-shorts-downloader", label: "Shorts" },
   { to: "/4k-downloader", label: "4K" },
+  { to: "/blog", label: "Blog" },
 ];
 
 export const ADSENSE_CLIENT = "ca-pub-8950040060205447";

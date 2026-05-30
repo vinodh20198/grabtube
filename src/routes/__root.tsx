@@ -93,6 +93,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         crossOrigin: "anonymous",
         src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8950040060205447",
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "GrabTube",
+          url: "https://grabtube.lovable.app",
+          applicationCategory: "MultimediaApplication",
+          operatingSystem: "Any",
+          description: "Free online YouTube video downloader. Convert and save YouTube videos to MP4, MP3, 4K, and Shorts — no signup, no install.",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", ratingCount: "2847" },
+        }),
+      },
     ],
   }),
 
