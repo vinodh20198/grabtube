@@ -13,8 +13,10 @@ import { Route as YoutubeToMp4RouteImport } from './routes/youtube-to-mp4'
 import { Route as YoutubeToMp3RouteImport } from './routes/youtube-to-mp3'
 import { Route as YoutubeShortsDownloaderRouteImport } from './routes/youtube-shorts-downloader'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as R4kDownloaderRouteImport } from './routes/4k-downloader'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
 const YoutubeToMp4Route = YoutubeToMp4RouteImport.update({
   id: '/youtube-to-mp4',
@@ -36,6 +38,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const R4kDownloaderRoute = R4kDownloaderRouteImport.update({
   id: '/4k-downloader',
   path: '/4k-downloader',
@@ -46,62 +53,80 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/4k-downloader': typeof R4kDownloaderRoute
+  '/blog': typeof BlogRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/youtube-shorts-downloader': typeof YoutubeShortsDownloaderRoute
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
+  '/blog/$slug': typeof BlogSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/4k-downloader': typeof R4kDownloaderRoute
+  '/blog': typeof BlogRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/youtube-shorts-downloader': typeof YoutubeShortsDownloaderRoute
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
+  '/blog/$slug': typeof BlogSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/4k-downloader': typeof R4kDownloaderRoute
+  '/blog': typeof BlogRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/youtube-shorts-downloader': typeof YoutubeShortsDownloaderRoute
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
+  '/blog/$slug': typeof BlogSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/4k-downloader'
+    | '/blog'
     | '/sitemap.xml'
     | '/youtube-shorts-downloader'
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
+    | '/blog/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/4k-downloader'
+    | '/blog'
     | '/sitemap.xml'
     | '/youtube-shorts-downloader'
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
+    | '/blog/$slug'
   id:
     | '__root__'
     | '/'
     | '/4k-downloader'
+    | '/blog'
     | '/sitemap.xml'
     | '/youtube-shorts-downloader'
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
+    | '/blog/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R4kDownloaderRoute: typeof R4kDownloaderRoute
+  BlogRoute: typeof BlogRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   YoutubeShortsDownloaderRoute: typeof YoutubeShortsDownloaderRoute
   YoutubeToMp3Route: typeof YoutubeToMp3Route
@@ -138,6 +163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/4k-downloader': {
       id: '/4k-downloader'
       path: '/4k-downloader'
@@ -152,12 +184,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
   }
 }
+
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R4kDownloaderRoute: R4kDownloaderRoute,
+  BlogRoute: BlogRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   YoutubeShortsDownloaderRoute: YoutubeShortsDownloaderRoute,
   YoutubeToMp3Route: YoutubeToMp3Route,
@@ -166,3 +216,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
