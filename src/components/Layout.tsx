@@ -10,7 +10,7 @@ const NAV = [
   { to: "/4k-downloader", label: "4K" },
 ];
 
-export const ADSENSE_CLIENT = "ca-pub-XXXXXXXXXXXXXXXX";
+export const ADSENSE_CLIENT = "ca-pub-8950040060205447";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   // Inject AdSense script once on the client to avoid SSR/hydration mismatch.
