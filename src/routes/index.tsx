@@ -7,10 +7,10 @@ import { CheckCircle2, Smartphone, Zap, ShieldCheck } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GrabTube — Free YouTube Video Downloader (MP4, MP3, 4K)" },
-      { name: "description", content: "Free YouTube downloader. Convert and save videos to MP4, MP3, 4K, or Shorts in seconds. No signup, no limits, works on any device." },
-      { property: "og:title", content: "GrabTube — Free YouTube Downloader" },
-      { property: "og:description", content: "Free YouTube to MP4 & MP3 downloader." },
+      { title: "YouTube Video Downloader — Free YT Download (MP4, MP3, 4K) | GrabTube" },
+      { name: "description", content: "Free YT downloader for YouTube video download in MP4, MP3, 4K, and Shorts. Fast, unlimited, no signup, works on any device." },
+      { property: "og:title", content: "GrabTube — Free YouTube Video Downloader" },
+      { property: "og:description", content: "YT video downloader: free YouTube download in MP4, MP3, and 4K." },
     ],
   }),
   component: Home,
