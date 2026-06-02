@@ -53,13 +53,40 @@ export function Downloader({
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = url.trim();
+    const normalized = normalizeYoutubeUrl(url);
+    if (normalized !== url) setUrl(normalized);
+    await runFetch(normalized);
+  }
+
+  async function runFetch(rawUrl: string) {
+    const trimmed = normalizeYoutubeUrl(rawUrl);
     if (!trimmed) return;
     setLoading(true);
     setError(null);
     setResult(null);
     try {
       const res = await fetchFn({ data: { url: trimmed } });
+      if (!res.ok) {
+        setError(res.error || "Could not fetch video.");
+      } else {
+        setResult(res);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!autoFetch || autoFiredRef.current) return;
+    if (!initialUrl) return;
+    autoFiredRef.current = true;
+    runFetch(initialUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFetch, initialUrl]);
+
       if (!res.ok) {
         setError(res.error || "Could not fetch video.");
       } else {
