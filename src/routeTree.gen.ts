@@ -17,6 +17,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as R4kDownloaderRouteImport } from './routes/4k-downloader'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShortsIdRouteImport } from './routes/shorts.$id'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
 const YoutubeToMp4Route = YoutubeToMp4RouteImport.update({
@@ -59,6 +60,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShortsIdRoute = ShortsIdRouteImport.update({
+  id: '/shorts/$id',
+  path: '/shorts/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
   '/blog/$slug': typeof BlogSlugRoute
+  '/shorts/$id': typeof ShortsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
   '/blog/$slug': typeof BlogSlugRoute
+  '/shorts/$id': typeof ShortsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
   '/blog/$slug': typeof BlogSlugRoute
+  '/shorts/$id': typeof ShortsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
     | '/blog/$slug'
+    | '/shorts/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
     | '/blog/$slug'
+    | '/shorts/$id'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
     | '/blog/$slug'
+    | '/shorts/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   YoutubeShortsDownloaderRoute: typeof YoutubeShortsDownloaderRoute
   YoutubeToMp3Route: typeof YoutubeToMp3Route
   YoutubeToMp4Route: typeof YoutubeToMp4Route
+  ShortsIdRoute: typeof ShortsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shorts/$id': {
+      id: '/shorts/$id'
+      path: '/shorts/$id'
+      fullPath: '/shorts/$id'
+      preLoaderRoute: typeof ShortsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
@@ -233,6 +253,7 @@ const rootRouteChildren: RootRouteChildren = {
   YoutubeShortsDownloaderRoute: YoutubeShortsDownloaderRoute,
   YoutubeToMp3Route: YoutubeToMp3Route,
   YoutubeToMp4Route: YoutubeToMp4Route,
+  ShortsIdRoute: ShortsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
