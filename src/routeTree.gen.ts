@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as YoutubeToMp4RouteImport } from './routes/youtube-to-mp4'
 import { Route as YoutubeToMp3RouteImport } from './routes/youtube-to-mp3'
 import { Route as YoutubeShortsDownloaderRouteImport } from './routes/youtube-shorts-downloader'
+import { Route as WatchRouteImport } from './routes/watch'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as R4kDownloaderRouteImport } from './routes/4k-downloader'
@@ -31,6 +32,11 @@ const YoutubeToMp3Route = YoutubeToMp3RouteImport.update({
 const YoutubeShortsDownloaderRoute = YoutubeShortsDownloaderRouteImport.update({
   id: '/youtube-shorts-downloader',
   path: '/youtube-shorts-downloader',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WatchRoute = WatchRouteImport.update({
+  id: '/watch',
+  path: '/watch',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/4k-downloader': typeof R4kDownloaderRoute
   '/blog': typeof BlogRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/watch': typeof WatchRoute
   '/youtube-shorts-downloader': typeof YoutubeShortsDownloaderRoute
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/4k-downloader': typeof R4kDownloaderRoute
   '/blog': typeof BlogRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/watch': typeof WatchRoute
   '/youtube-shorts-downloader': typeof YoutubeShortsDownloaderRoute
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/4k-downloader': typeof R4kDownloaderRoute
   '/blog': typeof BlogRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/watch': typeof WatchRoute
   '/youtube-shorts-downloader': typeof YoutubeShortsDownloaderRoute
   '/youtube-to-mp3': typeof YoutubeToMp3Route
   '/youtube-to-mp4': typeof YoutubeToMp4Route
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/4k-downloader'
     | '/blog'
     | '/sitemap.xml'
+    | '/watch'
     | '/youtube-shorts-downloader'
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/4k-downloader'
     | '/blog'
     | '/sitemap.xml'
+    | '/watch'
     | '/youtube-shorts-downloader'
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/4k-downloader'
     | '/blog'
     | '/sitemap.xml'
+    | '/watch'
     | '/youtube-shorts-downloader'
     | '/youtube-to-mp3'
     | '/youtube-to-mp4'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   R4kDownloaderRoute: typeof R4kDownloaderRoute
   BlogRoute: typeof BlogRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  WatchRoute: typeof WatchRoute
   YoutubeShortsDownloaderRoute: typeof YoutubeShortsDownloaderRoute
   YoutubeToMp3Route: typeof YoutubeToMp3Route
   YoutubeToMp4Route: typeof YoutubeToMp4Route
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/youtube-shorts-downloader'
       fullPath: '/youtube-shorts-downloader'
       preLoaderRoute: typeof YoutubeShortsDownloaderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/watch': {
+      id: '/watch'
+      path: '/watch'
+      fullPath: '/watch'
+      preLoaderRoute: typeof WatchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -209,6 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   R4kDownloaderRoute: R4kDownloaderRoute,
   BlogRoute: BlogRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  WatchRoute: WatchRoute,
   YoutubeShortsDownloaderRoute: YoutubeShortsDownloaderRoute,
   YoutubeToMp3Route: YoutubeToMp3Route,
   YoutubeToMp4Route: YoutubeToMp4Route,
@@ -216,3 +237,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
