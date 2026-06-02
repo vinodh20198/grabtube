@@ -51,14 +51,13 @@ def info(
 ):
     check_auth(authorization)
 
-    if not YOUTUBE_RE.match(url.strip()):
+    # Normalize "GT shortcut" hosts → real YouTube hosts.
+    normalized = re.sub(r"^(https?://)?(www\.)?gtyoutube\.com", "https://www.youtube.com", url.strip(), flags=re.IGNORECASE)
+    normalized = re.sub(r"^(https?://)?(www\.)?gtyoutu\.be", "https://youtu.be", normalized, flags=re.IGNORECASE)
+
+    if not YOUTUBE_RE.match(normalized):
         raise HTTPException(status_code=400, detail="Invalid YouTube URL")
 
-    ydl_opts = {
-        "quiet": True,
-        "no_warnings": True,
-        "skip_download": True,
-        "noplaylist": True,
     ydl_opts = {
         "quiet": True,
         "no_warnings": True,
@@ -73,7 +72,13 @@ def info(
             }
         },
     }
+
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            data = ydl.extract_info(normalized, download=False)
+    except Exception as e:
         raise HTTPException(status_code=502, detail=f"Extractor error: {str(e)[:200]}")
+
 
     formats = data.get("formats") or []
     videos, audios = [], []
