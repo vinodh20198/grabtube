@@ -87,18 +87,7 @@ export function Downloader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFetch, initialUrl]);
 
-      if (!res.ok) {
-        setError(res.error || "Could not fetch video.");
-      } else {
-        setResult(res);
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong. Try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
+
 
   const formats: { id: Format; label: string }[] = [
     { id: "mp4", label: "MP4" },
