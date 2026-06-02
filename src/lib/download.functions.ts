@@ -6,8 +6,11 @@ const inputSchema = z.object({
 });
 
 function extractVideoId(input: string): string | null {
-  const trimmed = input.trim();
+  const trimmed = input.trim()
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutube\.com/i, "https://www.youtube.com")
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutu\.be/i, "https://youtu.be");
   if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+
   try {
     const u = new URL(trimmed);
     const host = u.hostname.replace(/^www\./, "");
