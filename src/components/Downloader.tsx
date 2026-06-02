@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Clipboard, Download, Loader2, Info, Music, Video, X } from "lucide-react";
 import { fetchDownloadOptions, type DownloadResult } from "@/lib/download.functions";
@@ -16,12 +16,31 @@ function formatBytes(bytes?: string) {
   return `${v.toFixed(v >= 10 ? 0 : 1)} ${units[i]}`;
 }
 
-export function Downloader({ defaultFormat = "mp4" as Format }) {
-  const [url, setUrl] = useState("");
+// "GT" shortcut: rewrite gtyoutube.com / gtyoutu.be to real YouTube hosts so
+// users can prefix any YouTube URL with "gt" for a faster grab.
+export function normalizeYoutubeUrl(input: string): string {
+  const s = input.trim();
+  if (!s) return s;
+  return s
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutube\.com/i, "https://www.youtube.com")
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutu\.be/i, "https://youtu.be");
+}
+
+export function Downloader({
+  defaultFormat = "mp4" as Format,
+  initialUrl,
+  autoFetch,
+}: {
+  defaultFormat?: Format;
+  initialUrl?: string;
+  autoFetch?: boolean;
+}) {
+  const [url, setUrl] = useState(initialUrl ? normalizeYoutubeUrl(initialUrl) : "");
   const [format, setFormat] = useState<Format>(defaultFormat);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<DownloadResult | null>(null);
+  const autoFiredRef = useRef(false);
 
   const fetchFn = useServerFn(fetchDownloadOptions);
 
