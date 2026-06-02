@@ -6,8 +6,11 @@ const inputSchema = z.object({
 });
 
 function extractVideoId(input: string): string | null {
-  const trimmed = input.trim();
+  const trimmed = input.trim()
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutube\.com/i, "https://www.youtube.com")
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutu\.be/i, "https://youtu.be");
   if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+
   try {
     const u = new URL(trimmed);
     const host = u.hostname.replace(/^www\./, "");
@@ -162,11 +165,19 @@ async function fetchFromRapidApi(url: string): Promise<DownloadResult> {
   }
 }
 
+function normalizeUrl(u: string) {
+  return u.trim()
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutube\.com/i, "https://www.youtube.com")
+    .replace(/^(https?:\/\/)?(www\.)?gtyoutu\.be/i, "https://youtu.be");
+}
+
 export const fetchDownloadOptions = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => inputSchema.parse(data))
   .handler(async ({ data }): Promise<DownloadResult> => {
+    const url = normalizeUrl(data.url);
     // Prefer self-hosted yt-dlp if configured; fall back to RapidAPI.
-    const selfHosted = await fetchFromSelfHosted(data.url);
+    const selfHosted = await fetchFromSelfHosted(url);
     if (selfHosted) return selfHosted;
-    return fetchFromRapidApi(data.url);
+    return fetchFromRapidApi(url);
   });
+

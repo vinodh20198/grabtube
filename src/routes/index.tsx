@@ -47,7 +47,31 @@ function Home() {
         <AdSlot slot="1111111111" minHeight={120} />
       </div>
 
-      {/* Disclaimer banner */}
+      {/* GT shortcut */}
+      <section className="container mx-auto px-4 mt-6">
+        <div className="max-w-5xl mx-auto bg-card border border-border rounded-lg p-5 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
+            <span className="size-1.5 rounded-full bg-primary" /> The "GT" shortcut — fastest way to download
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+            Add <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-xs">gt</code> before <strong>youtube</strong> in any video URL and hit Enter. We instantly load the video and show your MP4, MP3, and 4K options.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+            <div className="bg-muted/50 border border-border rounded-md p-3 font-mono text-xs break-all">
+              <div className="text-muted-foreground mb-1 font-sans">Before</div>
+              youtube.com/watch?v=8KvjkdhuLk
+            </div>
+            <div className="bg-primary-soft border border-primary/20 rounded-md p-3 font-mono text-xs break-all">
+              <div className="text-primary mb-1 font-sans">After</div>
+              <strong>gt</strong>youtube.com/watch?v=8KvjkdhuLk
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Works with <code className="font-mono">/watch?v=…</code>, <code className="font-mono">/shorts/…</code>, and <code className="font-mono">gtyoutu.be/…</code> short links.
+          </p>
+        </div>
+      </section>
+
       <div className="container mx-auto px-4 mt-2">
         <div className="max-w-5xl mx-auto bg-primary-soft text-primary border border-primary/20 rounded-md px-4 py-3 text-sm">
           – GrabTube is a free, web-based YouTube downloader and is not affiliated with any software or paid products.
