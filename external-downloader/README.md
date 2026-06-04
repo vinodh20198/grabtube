@@ -1,5 +1,8 @@
 # GrabTube Self-Hosted Downloader Backend
 
+<!-- redeploy: yt-dlp version range + app.py fixes -->
+
+
 A small FastAPI service that wraps **yt-dlp** to extract direct download URLs for YouTube videos. This is what powers the "real" download capability of your site (similar to how y2mate works under the hood).
 
 > Lovable Cloud (Cloudflare Workers) cannot run yt-dlp because it needs Python + ffmpeg native binaries. That's why this lives in its own repo/deploy.
