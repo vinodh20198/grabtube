@@ -109,8 +109,8 @@ def info(
         "no_warnings": True,
         "skip_download": True,
         "noplaylist": True,
-        "format": "bestvideo*+bestaudio/best/best",
-        "ignoreerrors": False,
+        # No format filter — we're only extracting metadata, not downloading.
+        # The client picks a format from the returned list.
         # tv_embedded + tv are the most resilient clients on datacenter IPs
         # right now; web/android require PO tokens.
         "extractor_args": {
